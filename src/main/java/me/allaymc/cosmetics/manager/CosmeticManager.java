@@ -9,8 +9,7 @@ public class CosmeticManager {
 
     private final Plugin plugin;
 
-    // player -> enabled cosmetics
-    private final Map<UUID, Set<String>> enabled = new HashMap<>();
+    private final Map<UUID, Set<String>> data = new HashMap<>();
 
     public CosmeticManager(Plugin plugin) {
         this.plugin = plugin;
@@ -25,16 +24,16 @@ public class CosmeticManager {
     }
 
     public void enable(Player player, String cosmetic) {
-        enabled.computeIfAbsent(player.getUniqueId(), k -> new HashSet<>()).add(cosmetic);
+        data.computeIfAbsent(player.getUniqueId(), k -> new HashSet<>()).add(cosmetic);
     }
 
     public void disable(Player player, String cosmetic) {
-        Set<String> set = enabled.get(player.getUniqueId());
+        Set<String> set = data.get(player.getUniqueId());
         if (set != null) set.remove(cosmetic);
     }
 
     public boolean isEnabled(Player player, String cosmetic) {
-        return enabled.getOrDefault(player.getUniqueId(), Collections.emptySet()).contains(cosmetic);
+        return data.getOrDefault(player.getUniqueId(), Collections.emptySet()).contains(cosmetic);
     }
 
     public void apply(Player player, List<String> cosmetics) {
@@ -48,6 +47,6 @@ public class CosmeticManager {
     }
 
     public void triggerKill(Player player) {
-        // placeholder for kill effects
+        // hook for kill effects
     }
 }
