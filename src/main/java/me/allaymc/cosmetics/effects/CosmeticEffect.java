@@ -2,9 +2,9 @@ package me.allaymc.cosmetics.effects;
 
 import org.bukkit.entity.Player;
 
-public interface CosmeticEffect {
+public abstract class CosmeticEffect {
 
-    void enable(Player player);
+    public abstract void enable(Player player);
 
-    void disable(Player player);
+    public abstract void disable(Player player);
 }
