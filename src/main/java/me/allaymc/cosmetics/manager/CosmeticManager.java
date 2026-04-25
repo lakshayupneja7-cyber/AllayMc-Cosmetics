@@ -1,7 +1,11 @@
 package me.allaymc.cosmetics.manager;
 
 import me.allaymc.cosmetics.effects.CosmeticEffect;
-import me.allaymc.cosmetics.effects.impl.*;
+import me.allaymc.cosmetics.effects.AuraEffect;
+import me.allaymc.cosmetics.effects.WingEffect;
+import me.allaymc.cosmetics.effects.TrailEffect;
+import me.allaymc.cosmetics.effects.KillEffect;
+import me.allaymc.cosmetics.effects.AllayPetEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -19,6 +23,7 @@ public class CosmeticManager {
         this.plugin = plugin;
         this.rankManager = rankManager;
 
+        // Register effects
         register(new AuraEffect());
         register(new WingEffect());
         register(new TrailEffect());
@@ -30,37 +35,42 @@ public class CosmeticManager {
         effects.put(effect.getId(), effect);
     }
 
-    public void apply(Player p) {
-        if (disabled.contains(p.getUniqueId())) return;
+    public void apply(Player player) {
+        if (disabled.contains(player.getUniqueId())) return;
 
-        for (String id : rankManager.getEffects(p)) {
+        for (String id : rankManager.getEffects(player)) {
             CosmeticEffect effect = effects.get(id);
             if (effect != null) {
-                effect.start(p);
+                effect.start(player);
             }
         }
     }
 
-    public void toggle(Player p) {
-        if (disabled.contains(p.getUniqueId())) {
-            disabled.remove(p.getUniqueId());
-            apply(p);
+    public void toggle(Player player) {
+        UUID uuid = player.getUniqueId();
+
+        if (disabled.contains(uuid)) {
+            disabled.remove(uuid);
+            apply(player);
         } else {
-            disabled.add(p.getUniqueId());
-            stopAll(p);
+            disabled.add(uuid);
+            stopAll(player);
         }
     }
 
-    public void preview(Player p, String id) {
+    public void preview(Player player, String id) {
         CosmeticEffect effect = effects.get(id);
+
         if (effect != null) {
-            effect.startPreview(p);
+            effect.startPreview(player);
+        } else {
+            player.sendMessage("§cUnknown effect: " + id);
         }
     }
 
-    public void stopAll(Player p) {
-        for (CosmeticEffect e : effects.values()) {
-            e.stop(p);
+    public void stopAll(Player player) {
+        for (CosmeticEffect effect : effects.values()) {
+            effect.stop(player);
         }
     }
 }
