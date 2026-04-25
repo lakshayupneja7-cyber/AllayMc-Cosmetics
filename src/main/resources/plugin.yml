@@ -1,0 +1,10 @@
+name: AllayCosmetics
+version: 1.0
+main: me.allaymc.cosmetics.AllayCosmetics
+api-version: 1.21
+softdepend: [LuckPerms]
+
+commands:
+  allaycosmetics:
+    usage: /allaycosmetics <on|off>
+    description: Toggle cosmetics
