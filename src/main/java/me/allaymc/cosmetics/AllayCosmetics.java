@@ -1,8 +1,7 @@
 package me.allaymc.cosmetics;
 
-import me.allaymc.cosmetics.command.ToggleCommand;
+import me.allaymc.cosmetics.command.CosmeticCommand;
 import me.allaymc.cosmetics.listener.JoinListener;
-import me.allaymc.cosmetics.listener.KillListener;
 import me.allaymc.cosmetics.manager.CosmeticManager;
 import me.allaymc.cosmetics.manager.RankManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,27 +9,27 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AllayCosmetics extends JavaPlugin {
 
     private static AllayCosmetics instance;
-    private CosmeticManager manager;
+
+    private CosmeticManager cosmeticManager;
+    private RankManager rankManager;
 
     @Override
     public void onEnable() {
         instance = this;
+
         saveDefaultConfig();
 
-        RankManager rankManager = new RankManager(this);
-        manager = new CosmeticManager(this, rankManager);
+        rankManager = new RankManager(this);
+        cosmeticManager = new CosmeticManager(this, rankManager);
 
-        getServer().getPluginManager().registerEvents(
-                new JoinListener(manager), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(cosmeticManager), this);
 
-        getServer().getPluginManager().registerEvents(
-                new KillListener(manager), this);
+        getCommand("cosmetic").setExecutor(new CosmeticCommand(cosmeticManager));
 
-        getCommand("allaycosmetics")
-                .setExecutor(new ToggleCommand(manager));
+        getLogger().info("AllayCosmetics v3 enabled");
     }
 
-    public static AllayCosmetics get() {
+    public static AllayCosmetics getInstance() {
         return instance;
     }
 }
