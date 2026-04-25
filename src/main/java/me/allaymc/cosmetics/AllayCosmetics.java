@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AllayCosmetics extends JavaPlugin {
 
     private static AllayCosmetics instance;
-    private CosmeticManager cosmeticManager;
+    private CosmeticManager manager;
 
     @Override
     public void onEnable() {
@@ -18,12 +18,16 @@ public class AllayCosmetics extends JavaPlugin {
         saveDefaultConfig();
 
         RankManager rankManager = new RankManager(this);
-        cosmeticManager = new CosmeticManager(this, rankManager);
+        manager = new CosmeticManager(this, rankManager);
 
-        getServer().getPluginManager().registerEvents(new JoinListener(cosmeticManager), this);
-        getServer().getPluginManager().registerEvents(new KillListener(cosmeticManager), this);
+        getServer().getPluginManager().registerEvents(
+                new JoinListener(manager), this);
 
-        getCommand("allaycosmetics").setExecutor(new ToggleCommand(cosmeticManager));
+        getServer().getPluginManager().registerEvents(
+                new KillListener(manager), this);
+
+        getCommand("allaycosmetics")
+                .setExecutor(new ToggleCommand(manager));
     }
 
     public static AllayCosmetics get() {
