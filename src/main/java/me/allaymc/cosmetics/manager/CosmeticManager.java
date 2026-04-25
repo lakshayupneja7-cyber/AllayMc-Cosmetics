@@ -9,6 +9,7 @@ import java.util.*;
 public class CosmeticManager {
 
     private final Plugin plugin;
+
     private final Map<String, CosmeticEffect> effects = new HashMap<>();
     private final Map<UUID, Set<String>> enabled = new HashMap<>();
 
@@ -60,6 +61,6 @@ public class CosmeticManager {
     }
 
     public void triggerKill(Player player) {
-        // called by kill listener
+        // hook for kill effects
     }
 }
