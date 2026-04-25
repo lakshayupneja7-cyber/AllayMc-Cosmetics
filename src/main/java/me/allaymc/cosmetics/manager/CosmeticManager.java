@@ -11,7 +11,6 @@ public class CosmeticManager {
     private final Map<String, CosmeticEffect> registry = new HashMap<>();
     private final Map<UUID, List<CosmeticEffect>> active = new HashMap<>();
     private final Set<UUID> disabled = new HashSet<>();
-
     private final RankManager rankManager;
 
     public CosmeticManager(Plugin plugin, RankManager rankManager) {
@@ -24,18 +23,8 @@ public class CosmeticManager {
         register(new AllayPetEffect());
     }
 
-    private void register(CosmeticEffect effect) {
-        registry.put(effect.getName(), effect);
-    }
-
-    public void enable(Player p) {
-        disabled.remove(p.getUniqueId());
-        apply(p);
-    }
-
-    public void disable(Player p) {
-        disabled.add(p.getUniqueId());
-        remove(p);
+    private void register(CosmeticEffect e) {
+        registry.put(e.getName(), e);
     }
 
     public void apply(Player p) {
@@ -43,14 +32,14 @@ public class CosmeticManager {
 
         remove(p);
 
-        List<String> list = rankManager.getEffects(p);
+        List<String> effects = rankManager.getEffects(p);
         List<CosmeticEffect> running = new ArrayList<>();
 
-        for (String e : list) {
-            CosmeticEffect effect = registry.get(e);
-            if (effect != null) {
-                effect.start(p);
-                running.add(effect);
+        for (String name : effects) {
+            CosmeticEffect e = registry.get(name);
+            if (e != null) {
+                e.start(p);
+                running.add(e);
             }
         }
 
@@ -63,6 +52,23 @@ public class CosmeticManager {
 
         for (CosmeticEffect e : list) {
             e.stop(p);
+        }
+    }
+
+    public void enable(Player p) {
+        disabled.remove(p.getUniqueId());
+        apply(p);
+    }
+
+    public void disable(Player p) {
+        disabled.add(p.getUniqueId());
+        remove(p);
+    }
+
+    public void triggerKill(Player p) {
+        CosmeticEffect e = registry.get("kill_effect");
+        if (e instanceof KillEffect k) {
+            k.trigger(p);
         }
     }
 }
