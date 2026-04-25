@@ -1,9 +1,7 @@
 package me.allaymc.cosmetics.command;
 
 import me.allaymc.cosmetics.manager.CosmeticManager;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
 public class ToggleCommand implements CommandExecutor {
@@ -15,17 +13,19 @@ public class ToggleCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        if (!(sender instanceof Player)) return true;
-
-        Player player = (Player) sender;
+        if (!(sender instanceof Player player)) return true;
 
         if (args.length < 1) return true;
 
-        String id = args[0];
+        String cosmetic = args[0];
 
-        manager.toggle(player, id);
+        if (manager.isEnabled(player, cosmetic)) {
+            manager.disable(player, cosmetic);
+        } else {
+            manager.enable(player, cosmetic);
+        }
 
         return true;
     }
