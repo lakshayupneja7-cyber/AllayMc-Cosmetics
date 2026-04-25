@@ -1,6 +1,16 @@
+package me.allaymc.cosmetics.manager;
+
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import java.util.*;
+
 public class CosmeticManager {
 
     private final Plugin plugin;
+
+    // player -> enabled cosmetics
+    private final Map<UUID, Set<String>> enabled = new HashMap<>();
 
     public CosmeticManager(Plugin plugin) {
         this.plugin = plugin;
@@ -15,15 +25,16 @@ public class CosmeticManager {
     }
 
     public void enable(Player player, String cosmetic) {
-        // apply cosmetic
+        enabled.computeIfAbsent(player.getUniqueId(), k -> new HashSet<>()).add(cosmetic);
     }
 
     public void disable(Player player, String cosmetic) {
-        // remove cosmetic
+        Set<String> set = enabled.get(player.getUniqueId());
+        if (set != null) set.remove(cosmetic);
     }
 
     public boolean isEnabled(Player player, String cosmetic) {
-        return false; // your storage logic
+        return enabled.getOrDefault(player.getUniqueId(), Collections.emptySet()).contains(cosmetic);
     }
 
     public void apply(Player player, List<String> cosmetics) {
@@ -32,11 +43,11 @@ public class CosmeticManager {
         }
     }
 
-    public void triggerKill(Player player) {
-        // kill effects
+    public void preview(Player player, String cosmetic) {
+        enable(player, cosmetic);
     }
 
-    public void preview(Player player, String cosmetic) {
-        // preview logic
+    public void triggerKill(Player player) {
+        // placeholder for kill effects
     }
 }
