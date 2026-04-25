@@ -1,22 +1,14 @@
 package me.allaymc.cosmetics.effects;
 
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
-public class KillEffect implements CosmeticEffect {
+public class KillEffect extends CosmeticEffect {
 
     @Override
-    public void start(Player p) {}
-
-    @Override
-    public void stop(Player p) {}
-
-    @Override
-    public String getName() {
-        return "kill_effect";
+    public void enable(Player player) {
     }
 
-    public void trigger(Player p) {
-        p.getWorld().spawnParticle(Particle.SOUL, p.getLocation(), 20);
+    @Override
+    public void disable(Player player) {
     }
 }
