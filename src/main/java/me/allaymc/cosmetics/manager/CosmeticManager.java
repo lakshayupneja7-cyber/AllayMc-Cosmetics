@@ -11,62 +11,53 @@ public class CosmeticManager {
     private final Plugin plugin;
 
     private final Map<String, CosmeticEffect> effects = new HashMap<>();
-    private final Set<UUID> enabled = new HashSet<>();
+    private final Map<UUID, Set<String>> active = new HashMap<>();
 
     public CosmeticManager(Plugin plugin) {
         this.plugin = plugin;
     }
 
+    // register effect
     public void register(CosmeticEffect effect) {
-        effects.put(effect.getId(), effect);
+        effects.put(effect.id(), effect);
     }
 
-    // FIX: used by commands
-    public void toggle(Player player) {
-        if (enabled.contains(player.getUniqueId())) {
-            disable(player);
-        } else {
-            enable(player);
-        }
-    }
-
-    public void enable(Player player) {
-        enabled.add(player.getUniqueId());
-        apply(player);
-    }
-
-    public void disable(Player player) {
-        enabled.remove(player.getUniqueId());
-
-        for (CosmeticEffect effect : effects.values()) {
-            effect.disable(player);
-        }
-    }
-
-    // FIX: used by JoinListener
-    public void apply(Player player) {
-        if (!enabled.contains(player.getUniqueId())) return;
-
-        for (CosmeticEffect effect : effects.values()) {
-            effect.enable(player);
-        }
-    }
-
-    // FIX: preview system
-    public void preview(Player player, String id) {
+    // enable effect
+    public void enable(Player player, String id) {
         CosmeticEffect effect = effects.get(id);
-        if (effect != null) {
-            effect.enable(player);
+        if (effect == null) return;
+
+        effect.onEnable(player);
+        active.computeIfAbsent(player.getUniqueId(), k -> new HashSet<>()).add(id);
+    }
+
+    // disable effect
+    public void disable(Player player, String id) {
+        CosmeticEffect effect = effects.get(id);
+        if (effect == null) return;
+
+        effect.onDisable(player);
+
+        Set<String> set = active.get(player.getUniqueId());
+        if (set != null) set.remove(id);
+    }
+
+    // toggle
+    public void toggle(Player player, String id) {
+        Set<String> set = active.getOrDefault(player.getUniqueId(), new HashSet<>());
+
+        if (set.contains(id)) disable(player, id);
+        else enable(player, id);
+    }
+
+    // apply list (ranks)
+    public void apply(Player player, List<String> ids) {
+        for (String id : ids) {
+            enable(player, id);
         }
     }
 
-    // FIX: kill trigger
-    public void triggerKill(Player player) {
-        CosmeticEffect effect = effects.get("kill_effect");
-        if (effect != null) effect.enable(player);
-    }
-
-    public boolean isEnabled(Player player) {
-        return enabled.contains(player.getUniqueId());
+    public Set<String> getActive(Player player) {
+        return active.getOrDefault(player.getUniqueId(), new HashSet<>());
     }
 }
