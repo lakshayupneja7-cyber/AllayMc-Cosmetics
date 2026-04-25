@@ -15,33 +15,21 @@ public class CosmeticCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        if (!(sender instanceof Player p)) {
-            sender.sendMessage("Only players");
-            return true;
-        }
+        if (!(sender instanceof Player player)) return true;
 
-        if (args.length == 0) {
-            p.sendMessage("§b/cosmetic toggle");
-            p.sendMessage("§b/cosmetic preview <effect>");
-            return true;
-        }
+        if (args.length < 2) return true;
 
-        switch (args[0].toLowerCase()) {
+        String action = args[0];
+        String cosmetic = args[1];
 
-            case "toggle" -> {
-                manager.toggle(p);
-                p.sendMessage("§aCosmetics toggled");
-            }
+        switch (action.toLowerCase()) {
+            case "toggle":
+                manager.toggle(player, cosmetic);
+                break;
 
-            case "preview" -> {
-                if (args.length < 2) {
-                    p.sendMessage("§cUsage: /cosmetic preview <effect>");
-                    return true;
-                }
-
-                manager.preview(p, args[1]);
-                p.sendMessage("§bPreviewing: " + args[1]);
-            }
+            case "preview":
+                manager.preview(player, cosmetic);
+                break;
         }
 
         return true;
