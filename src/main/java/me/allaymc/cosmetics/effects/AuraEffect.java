@@ -1,20 +1,21 @@
 package me.allaymc.cosmetics.effects;
 
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 public class AuraEffect implements CosmeticEffect {
 
     @Override
-    public void start(Player p) {
-        p.getWorld().spawnParticle(Particle.END_ROD, p.getLocation().add(0,1,0), 2);
+    public String id() {
+        return "aura";
     }
 
     @Override
-    public void stop(Player p) {}
+    public void onEnable(Player player) {
+        player.sendMessage("Aura enabled");
+    }
 
     @Override
-    public String getName() {
-        return "aura";
+    public void onDisable(Player player) {
+        player.sendMessage("Aura disabled");
     }
 }
