@@ -21,38 +21,52 @@ public class CosmeticManager {
         effects.put(effect.getId(), effect);
     }
 
+    // FIX: used by commands
+    public void toggle(Player player) {
+        if (enabled.contains(player.getUniqueId())) {
+            disable(player);
+        } else {
+            enable(player);
+        }
+    }
+
     public void enable(Player player) {
         enabled.add(player.getUniqueId());
+        apply(player);
     }
 
     public void disable(Player player) {
         enabled.remove(player.getUniqueId());
 
-        // disable all effects
         for (CosmeticEffect effect : effects.values()) {
             effect.disable(player);
         }
     }
 
-    public boolean isEnabled(Player player) {
-        return enabled.contains(player.getUniqueId());
-    }
+    // FIX: used by JoinListener
+    public void apply(Player player) {
+        if (!enabled.contains(player.getUniqueId())) return;
 
-    public void applyAll(Player player, List<String> ids) {
-        if (!isEnabled(player)) return;
-
-        for (String id : ids) {
-            CosmeticEffect effect = effects.get(id);
-            if (effect != null) effect.enable(player);
+        for (CosmeticEffect effect : effects.values()) {
+            effect.enable(player);
         }
     }
 
+    // FIX: preview system
+    public void preview(Player player, String id) {
+        CosmeticEffect effect = effects.get(id);
+        if (effect != null) {
+            effect.enable(player);
+        }
+    }
+
+    // FIX: kill trigger
     public void triggerKill(Player player) {
         CosmeticEffect effect = effects.get("kill_effect");
         if (effect != null) effect.enable(player);
     }
 
-    public Collection<CosmeticEffect> getEffects() {
-        return effects.values();
+    public boolean isEnabled(Player player) {
+        return enabled.contains(player.getUniqueId());
     }
 }
