@@ -1,0 +1,19 @@
+settings:
+  tick-interval: 5
+
+ranks:
+  aura:
+    permission: rank.aura
+    effects: [aura]
+
+  radiant:
+    permission: rank.radiant
+    effects: [aura, wings]
+
+  ascendant:
+    permission: rank.ascendant
+    effects: [aura, wings, kill_effect]
+
+  prestige:
+    permission: rank.prestige
+    effects: [aura, wings, kill_effect, allay_pet]
