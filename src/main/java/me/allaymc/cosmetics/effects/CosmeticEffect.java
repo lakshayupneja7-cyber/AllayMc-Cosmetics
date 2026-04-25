@@ -4,9 +4,9 @@ import org.bukkit.entity.Player;
 
 public interface CosmeticEffect {
 
-    String id();
+    String getId();
 
-    void onEnable(Player player);
+    void enable(Player player);
 
-    void onDisable(Player player);
+    void disable(Player player);
 }
