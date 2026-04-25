@@ -6,11 +6,7 @@ public interface CosmeticEffect {
 
     String getId();
 
-    void start(Player player);
+    void enable(Player player);
 
-    default void stop(Player player) {}
-
-    default void startPreview(Player player) {
-        start(player);
-    }
+    void disable(Player player);
 }
