@@ -17,15 +17,15 @@ public class ToggleCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (!(sender instanceof Player player)) return true;
+        if (!(sender instanceof Player)) return true;
 
-        if (manager.isEnabled(player)) {
-            manager.disable(player);
-            player.sendMessage("§cCosmetics disabled");
-        } else {
-            manager.enable(player);
-            player.sendMessage("§aCosmetics enabled");
-        }
+        Player player = (Player) sender;
+
+        if (args.length < 1) return true;
+
+        String id = args[0];
+
+        manager.toggle(player, id);
 
         return true;
     }
