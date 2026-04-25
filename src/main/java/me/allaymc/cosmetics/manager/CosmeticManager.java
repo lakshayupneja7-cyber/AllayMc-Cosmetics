@@ -1,6 +1,7 @@
 package me.allaymc.cosmetics.manager;
 
-import me.allaymc.cosmetics.effects.*;
+import me.allaymc.cosmetics.effects.CosmeticEffect;
+import me.allaymc.cosmetics.effects.impl.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -8,12 +9,14 @@ import java.util.*;
 
 public class CosmeticManager {
 
-    private final Map<String, CosmeticEffect> registry = new HashMap<>();
-    private final Map<UUID, List<CosmeticEffect>> active = new HashMap<>();
-    private final Set<UUID> disabled = new HashSet<>();
+    private final Plugin plugin;
     private final RankManager rankManager;
 
+    private final Map<String, CosmeticEffect> effects = new HashMap<>();
+    private final Set<UUID> disabled = new HashSet<>();
+
     public CosmeticManager(Plugin plugin, RankManager rankManager) {
+        this.plugin = plugin;
         this.rankManager = rankManager;
 
         register(new AuraEffect());
@@ -23,52 +26,41 @@ public class CosmeticManager {
         register(new AllayPetEffect());
     }
 
-    private void register(CosmeticEffect e) {
-        registry.put(e.getName(), e);
+    private void register(CosmeticEffect effect) {
+        effects.put(effect.getId(), effect);
     }
 
     public void apply(Player p) {
         if (disabled.contains(p.getUniqueId())) return;
 
-        remove(p);
-
-        List<String> effects = rankManager.getEffects(p);
-        List<CosmeticEffect> running = new ArrayList<>();
-
-        for (String name : effects) {
-            CosmeticEffect e = registry.get(name);
-            if (e != null) {
-                e.start(p);
-                running.add(e);
+        for (String id : rankManager.getEffects(p)) {
+            CosmeticEffect effect = effects.get(id);
+            if (effect != null) {
+                effect.start(p);
             }
         }
-
-        active.put(p.getUniqueId(), running);
     }
 
-    public void remove(Player p) {
-        List<CosmeticEffect> list = active.remove(p.getUniqueId());
-        if (list == null) return;
-
-        for (CosmeticEffect e : list) {
-            e.stop(p);
+    public void toggle(Player p) {
+        if (disabled.contains(p.getUniqueId())) {
+            disabled.remove(p.getUniqueId());
+            apply(p);
+        } else {
+            disabled.add(p.getUniqueId());
+            stopAll(p);
         }
     }
 
-    public void enable(Player p) {
-        disabled.remove(p.getUniqueId());
-        apply(p);
+    public void preview(Player p, String id) {
+        CosmeticEffect effect = effects.get(id);
+        if (effect != null) {
+            effect.startPreview(p);
+        }
     }
 
-    public void disable(Player p) {
-        disabled.add(p.getUniqueId());
-        remove(p);
-    }
-
-    public void triggerKill(Player p) {
-        CosmeticEffect e = registry.get("kill_effect");
-        if (e instanceof KillEffect k) {
-            k.trigger(p);
+    public void stopAll(Player p) {
+        for (CosmeticEffect e : effects.values()) {
+            e.stop(p);
         }
     }
 }
