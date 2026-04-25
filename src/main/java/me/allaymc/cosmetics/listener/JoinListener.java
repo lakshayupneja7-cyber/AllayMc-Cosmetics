@@ -1,9 +1,10 @@
 package me.allaymc.cosmetics.listener;
 
 import me.allaymc.cosmetics.manager.CosmeticManager;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.util.List;
 
 public class JoinListener implements Listener {
 
@@ -14,7 +15,7 @@ public class JoinListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        manager.apply(e.getPlayer());
+    public void onJoin(PlayerJoinEvent event) {
+        manager.apply(event.getPlayer(), List.of());
     }
 }
